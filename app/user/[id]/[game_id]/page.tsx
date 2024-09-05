@@ -1,3 +1,4 @@
+import Breadcrumbs from "@/components/breadcrumbs-wrapper";
 import { steamApi } from "@/lib/steam-fetch";
 import Image from "next/image";
 import { notFound } from "next/navigation";
@@ -14,6 +15,7 @@ export default async function Page({
   }
 
   // Fetch player achievements and game schema
+  const playerInfo = await steamApi.getUserSummary(params.id);
   const playerAchievements = (
     await steamApi.getUserAchievements(params.id, gameId)
   ).achievements;
@@ -38,10 +40,12 @@ export default async function Page({
   console.log(mergedAchievements);
 
   return (
-    <div className="container mx-auto p-6">
-      <h1 className="text-3xl font-bold mb-4">
-        User {params.id} - {gameSchema.gameName}
-      </h1>
+    <div className="flex flex-col gap-4 mt-10">
+      <Breadcrumbs
+        userId={playerInfo.nickname}
+        gameName={gameSchema.gameName}
+      />
+
       <p className="text-lg mb-4">Achievements for this game:</p>
 
       <ul className="space-y-4">
