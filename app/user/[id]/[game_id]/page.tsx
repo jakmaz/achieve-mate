@@ -1,6 +1,10 @@
+import { AchievementList } from "@/components/achievement-list";
 import Breadcrumbs from "@/components/breadcrumbs-wrapper";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { steamApi } from "@/lib/steam-fetch";
-import Image from "next/image";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 
 export default async function Page({
@@ -21,6 +25,7 @@ export default async function Page({
   ).achievements;
   const gameSchema = await steamApi.getGameSchema(gameId);
   const gameAchievements = gameSchema.availableGameStats.achievements;
+  steamApi;
 
   // Merge playerAchievements with gameAchievements by matching "apiname" and "name"
   const mergedAchievements = playerAchievements.map(
@@ -37,50 +42,58 @@ export default async function Page({
     },
   );
 
-  console.log(mergedAchievements);
+  // Split achievements into completed and missing
+  const completedAchievements = mergedAchievements.filter(
+    (achievement: any) => achievement.unlocked,
+  );
+  const missingAchievements = mergedAchievements.filter(
+    (achievement: any) => !achievement.unlocked,
+  );
 
   return (
     <div className="flex flex-col gap-4 mt-10">
-      <Breadcrumbs
-        userId={playerInfo.nickname}
-        gameName={gameSchema.gameName}
-      />
+      <div className="flex gap-4 items-center">
+        <Breadcrumbs
+          userId={playerInfo.nickname}
+          gameName={gameSchema.gameName}
+        />
+        <Link href={`/game/${params.game_id}`}>
+          <Button>View Game Info</Button>
+        </Link>
+      </div>
 
-      <p className="text-lg mb-4">Achievements for this game:</p>
+      <Tabs defaultValue="completed" className="w-full">
+        <TabsList className="w-full flex justify-center">
+          <TabsTrigger value="completed" className="w-1/2">
+            Completed
+          </TabsTrigger>
+          <TabsTrigger value="missing" className="w-1/2">
+            Missing
+          </TabsTrigger>
+        </TabsList>
 
-      <ul className="space-y-4">
-        {mergedAchievements.map((achievement: any) => (
-          <li
-            key={achievement.name}
-            className="bg-gray-800 p-4 rounded-md flex justify-between items-center space-x-4"
-          >
-            <div className="flex items-center space-x-4">
-              <Image
-                src={
-                  achievement.unlocked ? achievement.icon : achievement.icongray
-                }
-                className="rounded-lg"
-                alt={achievement.displayName}
-                width={64}
-                height={64}
-              />
-              <div>
-                <h3 className="text-xl font-semibold">
-                  {achievement.displayName}
-                </h3>
-                <p>{achievement.description}</p>
-              </div>
-            </div>
-            <p>
-              {achievement.unlocked
-                ? `Unlocked on ${new Date(
-                    achievement.unlockedTimestamp * 1000,
-                  ).toLocaleDateString()}`
-                : "Not unlocked yet"}
-            </p>
-          </li>
-        ))}
-      </ul>
+        <TabsContent value="completed">
+          <Card>
+            <CardHeader>
+              <CardTitle>Completed Achievements</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <AchievementList achievements={completedAchievements} />
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="missing">
+          <Card>
+            <CardHeader>
+              <CardTitle>Missing Achievements</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <AchievementList achievements={missingAchievements} />
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
