@@ -1,6 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { steamApi } from "@/lib/steam-fetch";
+import { ExternalLink } from "lucide-react";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 
@@ -17,8 +18,9 @@ export default async function GamePage({
 
   // Fetch game data from the API
   const gameData = await steamApi.getGameDetails(gameId);
+  const gameSchema = await steamApi.getGameSchema(gameId);
 
-  if (!gameData) {
+  if (!gameData || !gameSchema) {
     return notFound();
   }
 
@@ -34,6 +36,8 @@ export default async function GamePage({
     release_date,
   } = gameData;
 
+  const gameAchievements = gameSchema.availableGameStats.achievements;
+
   return (
     <div className="container mx-auto p-6 mt-10">
       {/* Header section */}
@@ -46,7 +50,10 @@ export default async function GamePage({
           className="rounded-lg"
         />
         <div className="text-center lg:text-left">
-          <h1 className="text-4xl font-bold">{name}</h1>
+          <div className="flex gap-2 items-center">
+            <h1 className="text-4xl font-bold">{name}</h1>
+            <ExternalLink />
+          </div>
           <p className="text-sm text-gray-500">
             Release Date: {release_date.date}
           </p>
@@ -67,62 +74,56 @@ export default async function GamePage({
       </div>
 
       {/* Tabs Section */}
-      <Tabs defaultValue="overview" className="w-full">
-        <TabsList className="grid grid-cols-3">
-          <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="media">Media</TabsTrigger>
-          <TabsTrigger value="reviews">Reviews</TabsTrigger>
+      <Tabs defaultValue="achievements" className="w-full">
+        <TabsList className="grid grid-cols-2">
+          <TabsTrigger value="achievements">Achievements</TabsTrigger>
+          <TabsTrigger value="guides">Guides</TabsTrigger>
         </TabsList>
 
-        {/* Overview Content */}
-        <TabsContent value="overview">
+        {/* Achievements Content */}
+        <TabsContent value="achievements">
           <Card>
             <CardHeader>
-              <CardTitle>{name} - Overview</CardTitle>
-              <CardContent>
-                <div
-                  dangerouslySetInnerHTML={{ __html: detailed_description }}
-                  className="prose prose-sm "
-                />
-              </CardContent>
+              <CardTitle>Achievements</CardTitle>
             </CardHeader>
+            <CardContent>
+              <ul className="space-y-4">
+                {gameAchievements.map((achievement: any) => (
+                  <li
+                    key={achievement.name}
+                    className="bg-gray-800 p-4 rounded-md flex justify-between items-center space-x-4"
+                  >
+                    <div className="flex items-center space-x-4">
+                      <Image
+                        src={achievement.icon}
+                        className="rounded-lg"
+                        alt={achievement.displayName}
+                        width={64}
+                        height={64}
+                      />
+                      <div>
+                        <h3 className="text-xl font-semibold">
+                          {achievement.displayName}
+                        </h3>
+                        <p>{achievement.description}</p>
+                      </div>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </CardContent>
           </Card>
         </TabsContent>
 
-        {/* Media Content */}
-        <TabsContent value="media">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {screenshots.map((screenshot: any) => (
-              <div key={screenshot.id} className="relative w-full h-60">
-                <Image
-                  src={screenshot.path_full}
-                  alt={`Screenshot ${screenshot.id}`}
-                  fill
-                  style={{ objectFit: "cover" }}
-                  className="rounded-lg"
-                />
-              </div>
-            ))}
-          </div>
-        </TabsContent>
-
-        {/* Reviews Content */}
-        <TabsContent value="reviews">
+        {/* Guides Content */}
+        <TabsContent value="guides">
           <Card>
             <CardHeader>
-              <CardTitle>Reviews</CardTitle>
+              <CardTitle>Guides</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-md">
-                “Unlike anything else I've played.” – Polygon
-              </p>
-              <p className="text-md">
-                “A hallmark of excellence.” – Destructoid
-              </p>
-              <p className="text-md">
-                “The most innovative shooter I’ve played in years.” – Washington
-                Post
-              </p>
+              <p>Guides will be displayed here.</p>
+              {/* Add logic to display guides if available */}
             </CardContent>
           </Card>
         </TabsContent>

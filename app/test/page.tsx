@@ -1,10 +1,9 @@
-import { steamApi } from "@/lib/steam-fetch";
+import { getGuidesOverview } from "@/lib/fetch-guides";
 
 export default async function Page() {
-  const games = await steamApi.getUserOwnedGames("76561198989375284");
-  const gamesPlayed = games.filter((game) => game.minutes > 0);
+  const guides = await getGuidesOverview("730");
+  console.log(guides);
 
-  console.log(gamesPlayed);
   return (
     <div>
       <h1>Page</h1>
