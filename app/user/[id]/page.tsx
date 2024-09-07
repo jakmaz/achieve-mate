@@ -1,10 +1,11 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import GameList from "@/components/ui/games-list";
-import { steamApi } from "@/lib/steam-fetch";
+import { steamApi } from "@/lib/steam-api";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 
 export default async function Page({ params }: { params: { id: string } }) {
+  // Fetch user summary
   let user;
   try {
     user = await steamApi.getUserSummary(params.id);
@@ -12,11 +13,45 @@ export default async function Page({ params }: { params: { id: string } }) {
     return notFound();
   }
 
-  // Hardcoded stats for the example
-  const totalAchievements = 320;
-  const gamesCompleted = 42;
-  const totalGames = 120;
-  const totalPlaytime = 1600; // in hours
+  // Fetch owned games
+  const userGames = await steamApi.getUserOwnedGames(params.id);
+
+  // Variables to store dynamic stats
+  let totalAchievements = 0;
+  let gamesCompleted = 0;
+  let totalPlaytime = 0;
+
+  // Iterate over each game to fetch achievements and playtime
+  for (const game of userGames) {
+    const gameAchievements = await steamApi.getUserAchievements(
+      params.id,
+      game.appid.toString(),
+    );
+
+    // Sum up achievements count
+    totalAchievements += gameAchievements.length;
+
+    // If the user has unlocked all achievements, count it as a completed game
+    const unlockedAchievements = gameAchievements.filter(
+      (achievement) => achievement.achieved === 1,
+    );
+
+    if (
+      unlockedAchievements.length === gameAchievements.length &&
+      gameAchievements.length > 0
+    ) {
+      gamesCompleted++;
+    }
+
+    // Sum up the playtime in minutes and convert to hours
+    totalPlaytime += game.playtime_forever;
+  }
+
+  // Convert totalPlaytime to hours (Steam returns playtime in minutes)
+  const totalPlaytimeInHours = (totalPlaytime / 60).toFixed(2);
+
+  // Get total number of games owned
+  const totalGames = userGames.length;
 
   const rareAchievements = [
     {
@@ -53,18 +88,18 @@ export default async function Page({ params }: { params: { id: string } }) {
       {/* User Information Section */}
       <div className="flex items-center space-x-6 mb-8">
         <Image
-          src={user.avatar.large}
-          alt={`${user.nickname}'s avatar`}
+          src={user.avatarfull}
+          alt={`${user.personaname}'s avatar`}
           width={96}
           height={96}
           className="rounded-xl"
         />
         <div>
-          <h1 className="text-4xl font-bold">{user.nickname}</h1>
+          <h1 className="text-4xl font-bold">{user.personaname}</h1>
           <p>{user.steamid}</p>
           <p>
             Member since:{" "}
-            {new Date(user.timeCreated * 1000).toLocaleDateString()}
+            {new Date(user.timecreated * 1000).toLocaleDateString()}
           </p>
         </div>
       </div>
@@ -102,7 +137,7 @@ export default async function Page({ params }: { params: { id: string } }) {
             </CardHeader>
             <CardContent>
               <p className="text-3xl font-bold text-center">
-                {totalPlaytime} hours
+                {totalPlaytimeInHours} hours
               </p>
             </CardContent>
           </Card>

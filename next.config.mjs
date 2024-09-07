@@ -9,6 +9,14 @@ const nextConfig = {
       "avatars.steamstatic.com",
     ],
   },
+  images: {
+    unoptimized: true,
+  },
+  logging: {
+    fetches: {
+      fullUrl: true,
+    },
+  },
 };
 
 export default nextConfig;
