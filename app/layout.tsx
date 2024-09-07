@@ -1,3 +1,4 @@
+import { ThemeProvider } from "@/components/theme-provider";
 import Navbar from "@/components/ui/navbar";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
@@ -16,14 +17,21 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark">
+    <html lang="en" suppressHydrationWarning>
       <body>
-        <main className="flex flex-col items-center center w-full p-8 min-h-screen">
-          <Navbar />
-          <div className="flex flex-col gap-8 h-full w-full max-w-5xl">
-            <div className={inter.className}>{children}</div>
-          </div>
-        </main>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <main className="flex flex-col items-center center w-full p-8 min-h-screen">
+            <Navbar />
+            <div className="flex flex-col gap-8 h-full w-full max-w-5xl">
+              <div className={inter.className}>{children}</div>
+            </div>
+          </main>
+        </ThemeProvider>
       </body>
     </html>
   );

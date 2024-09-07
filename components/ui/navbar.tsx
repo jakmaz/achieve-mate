@@ -1,24 +1,30 @@
+import { Card } from "@/components/ui/card"; // Using Card from shadcn
 import Link from "next/link";
+import { ThemeSwitch } from "../theme-switch";
 
 export default function Navbar() {
   return (
-    <nav className="bg-gray-800 p-4">
+    <Card className="p-4">
       <div className="flex gap-4 justify-between items-center">
-        <div className="text-white text-2xl font-bold">
+        {/* Brand Name */}
+        <div className="text-2xl font-bold">
           <Link href="/">AchieveMate</Link>
         </div>
+
+        {/* Navigation Links */}
         <div className="space-x-4">
-          <Link href="/" className="text-gray-300 hover:text-white">
+          <Link href="/" className="hover:underline">
             Home
           </Link>
-          <Link href="/about" className="text-gray-300 hover:text-white">
+          <Link href="/about" className="hover:underline">
             About
           </Link>
-          <Link href="/contact" className="text-gray-300 hover:text-white">
+          <Link href="/contact" className="hover:underline">
             Contact
           </Link>
         </div>
+        <ThemeSwitch />
       </div>
-    </nav>
+    </Card>
   );
 }

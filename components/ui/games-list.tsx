@@ -18,18 +18,17 @@ export default async function GameList({ steamId }: { steamId: string }) {
 
   return (
     <div>
-      <p className="text-lg mb-6 text-gray-300">Total Games: {games.length}</p>
-
       {games.length > 0 ? (
         <div>
-          <h2 className="text-3xl font-bold mb-8 text-white">All Games</h2>
+          <h2 className="text-3xl font-bold mb-2">All Games</h2>
+          <p className="text-lg mb-6">Total Games: {games.length}</p>
           <ul className="space-y-4">
             {longestPlayedFirst.map((game) => (
               <li key={game.game.id}>
-                <Card className="bg-gray-800 text-white flex items-center justify-between p-4">
+                <Card className="flex items-center justify-between p-4">
                   {/* Left section: Logo and Game Details */}
                   <div className="flex items-center space-x-4">
-                    <Link href={steamId + "/" + game.game.id}>
+                    <Link href={`${steamId}/${game.game.id}`}>
                       <Image
                         src={game.game.headerMediumURL}
                         alt={`${game.game.name} logo`}
@@ -41,9 +40,9 @@ export default async function GameList({ steamId }: { steamId: string }) {
 
                     <div>
                       <CardHeader className="p-0">
-                        <CardTitle className="text-xl font-bold text-white">
+                        <CardTitle className="text-xl font-bold">
                           <Link
-                            href={steamId + "/" + game.game.id}
+                            href={`${steamId}/${game.game.id}`}
                             className="hover:underline"
                           >
                             {game.game.name}
@@ -55,7 +54,7 @@ export default async function GameList({ steamId }: { steamId: string }) {
 
                   {/* Right section: Playtime */}
                   <CardContent className="p-0">
-                    <CardDescription className="text-gray-400 text-right">
+                    <CardDescription className="text-right">
                       Playtime: {(game.minutes / 60).toFixed(2)} hours
                     </CardDescription>
                   </CardContent>
@@ -65,7 +64,7 @@ export default async function GameList({ steamId }: { steamId: string }) {
           </ul>
         </div>
       ) : (
-        <p className="text-lg text-gray-400">No games found for this user.</p>
+        <p className="text-lg">No games found for this user.</p>
       )}
     </div>
   );
