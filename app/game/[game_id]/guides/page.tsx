@@ -1,3 +1,10 @@
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"; // Adjust path as needed
 import { getGuidesOverview } from "@/lib/fetch-guides";
 import Image from "next/image";
 
@@ -10,15 +17,13 @@ export default async function Page({
 
   return (
     <div className="container mx-auto py-8">
-      <h1 className="text-4xl font-bold text-center text-white mb-8">
-        Top Rated Guides
-      </h1>
+      <h1 className="text-4xl font-bold text-center mb-8">Top Rated Guides</h1>
       {guides ? (
         <div className="space-y-8">
           {guides.map((guide, index) => (
-            <div
+            <Card
               key={index}
-              className="bg-gray-800 text-white hover:shadow-lg transition-shadow rounded-lg p-6 flex items-start space-x-6"
+              className="flex items-start space-x-6 p-6 hover:shadow-lg transition-shadow"
             >
               {/* Guide Icon */}
               {guide.icon && (
@@ -35,31 +40,37 @@ export default async function Page({
 
               {/* Guide Info */}
               <div className="flex-1">
-                <h2 className="text-2xl font-bold text-white">
-                  <a
-                    href={guide.guideLink}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="hover:underline"
-                  >
-                    {guide.title}
-                  </a>
-                </h2>
-                <p className="text-gray-400 mb-2">By {guide.author}</p>
+                <CardHeader className="p-0">
+                  <CardTitle className="text-2xl font-bold">
+                    <a
+                      href={guide.guideLink}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="hover:underline"
+                    >
+                      {guide.title}
+                    </a>
+                  </CardTitle>
+                  <CardDescription className="text-gray-400 mb-2">
+                    By {guide.author}
+                  </CardDescription>
+                </CardHeader>
 
-                {/* Description */}
-                {guide.description && (
-                  <p className="text-sm text-gray-300 mb-4 line-clamp-3">
-                    {guide.description}
+                <CardContent className="p-0">
+                  {/* Description */}
+                  {guide.description && (
+                    <p className="text-sm mb-4 line-clamp-3">
+                      {guide.description}
+                    </p>
+                  )}
+
+                  {/* Rating */}
+                  <p className="text-sm font-medium text-yellow-400">
+                    Rating: {guide.rating} / 5
                   </p>
-                )}
-
-                {/* Rating */}
-                <p className="text-sm font-medium text-yellow-400">
-                  Rating: {guide.rating} / 5
-                </p>
+                </CardContent>
               </div>
-            </div>
+            </Card>
           ))}
         </div>
       ) : (

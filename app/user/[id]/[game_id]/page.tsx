@@ -58,7 +58,7 @@ export default async function Page({
           gameName={gameSchema.gameName}
         />
         <Link href={`/game/${params.game_id}`}>
-          <Button>View Game Info</Button>
+          <Button variant="outline">View Game Info</Button>
         </Link>
       </div>
 

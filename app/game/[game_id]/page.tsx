@@ -32,7 +32,6 @@ export default async function GamePage({
     publishers,
     genres,
     platforms,
-    screenshots,
     release_date,
   } = gameData;
 
@@ -54,9 +53,7 @@ export default async function GamePage({
             <h1 className="text-4xl font-bold">{name}</h1>
             <ExternalLink />
           </div>
-          <p className="text-sm text-gray-500">
-            Release Date: {release_date.date}
-          </p>
+          <p className="text-sm">Release Date: {release_date.date}</p>
           <div className="text-md mt-4">
             <strong>Developers:</strong> {developers.join(", ")}
           </div>
@@ -91,7 +88,7 @@ export default async function GamePage({
                 {gameAchievements.map((achievement: any) => (
                   <li
                     key={achievement.name}
-                    className="bg-gray-800 p-4 rounded-md flex justify-between items-center space-x-4"
+                    className="flex justify-between items-center space-x-4"
                   >
                     <div className="flex items-center space-x-4">
                       <Image
