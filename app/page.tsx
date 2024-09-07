@@ -3,12 +3,6 @@ import { Input } from "@/components/ui/input";
 import { redirect } from "next/navigation";
 
 export default function Home() {
-  // const handleSubmit = (e: React.FormEvent) => {
-  //   e.preventDefault();
-  //   if (userId.trim()) {
-  //     router.push(`/user/${userId}`);
-  //   }
-  // };
   async function searchUser(formData: FormData) {
     "use server";
     formData.get("steamId");

@@ -5,7 +5,8 @@ const nextConfig = {
       "steamcdn-a.akamaihd.net",
       "shared.akamai.steamstatic.com",
       "steamuserimages-a.akamaihd.net",
-    ], // Add Steam's CDN domain here
+      "cdn.cloudflare.steamstatic.com",
+    ],
   },
 };
 
