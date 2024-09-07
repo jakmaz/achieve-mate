@@ -5,6 +5,8 @@ type GuideInfo = {
   author: string;
   description: string;
   rating: number;
+  icon: string;
+  guideLink: string;
 };
 
 export const getGuidesOverview = async (
@@ -34,13 +36,32 @@ export const getGuidesOverview = async (
         .find(".workshopItemShortDesc")
         .text()
         .trim();
-      const rating = $(element).find(".fileRating").length; // Assuming fileRating class repeats for each star
+
+      // Extracting the star rating from the image file name
+      const ratingImageSrc = $(element).find(".fileRating").attr("src");
+      let rating = 0;
+      if (ratingImageSrc) {
+        const ratingMatch = ratingImageSrc.match(/(\d)-star\.png/);
+        if (ratingMatch) {
+          rating = parseInt(ratingMatch[1], 10);
+        }
+      }
+
+      // Extracting the guide link
+      const guideLink = $(element)
+        .find("a.workshopItemCollection")
+        .attr("href");
+
+      // Extracting the icon image
+      const icon = $(element).find(".workshopItemPreviewImage").attr("src");
 
       guides.push({
         title,
         author,
         description,
         rating,
+        icon: icon ? icon : "", // Handle cases where icon might be missing
+        guideLink: guideLink ? guideLink : "", // Handle cases where link might be missing
       });
     });
 
